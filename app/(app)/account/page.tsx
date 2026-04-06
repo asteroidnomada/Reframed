@@ -1,3 +1,5 @@
+import { SignOutButton } from '@/components/auth/sign-out-button'
+
 export default function AccountPage() {
   return (
     <main className="px-4 py-8 max-w-md mx-auto space-y-6">
@@ -29,9 +31,7 @@ export default function AccountPage() {
         </div>
       </section>
 
-      <button className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
-        Sign out
-      </button>
+      <SignOutButton />
     </main>
   )
 }
