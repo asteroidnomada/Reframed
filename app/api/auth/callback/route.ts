@@ -9,9 +9,9 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      const next = searchParams.get('next') ?? '/'
+      const next = searchParams.get('next') ?? '/gallery'
       // Prevent open redirect — only allow relative paths
-      const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/'
+      const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/gallery'
       return NextResponse.redirect(`${origin}${safeNext}`)
     }
   }
