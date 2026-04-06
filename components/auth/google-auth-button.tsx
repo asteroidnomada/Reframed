@@ -9,15 +9,18 @@ export function GoogleAuthButton() {
 
   async function handleClick() {
     setPending(true)
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
-      },
-    })
-    // If signInWithOAuth rejects or returns without redirecting, re-enable
-    setPending(false)
+    try {
+      const supabase = createClient()
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/api/auth/callback`,
+        },
+      })
+    } finally {
+      // Normally the page navigates away; this re-enables on failure
+      setPending(false)
+    }
   }
 
   return (
