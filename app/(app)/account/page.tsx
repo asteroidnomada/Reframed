@@ -31,6 +31,22 @@ export default function AccountPage() {
         </div>
       </section>
 
+      <section className="border border-neutral-100 rounded-xl p-4 space-y-3">
+        <h2 className="text-sm font-medium text-neutral-700">Security</h2>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium">Password</p>
+            <p className="text-xs text-neutral-500">Send a reset link to your email</p>
+          </div>
+          <a
+            href="/forgot-password"
+            className="text-xs font-medium px-3 py-1.5 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+          >
+            Change password
+          </a>
+        </div>
+      </section>
+
       <SignOutButton />
     </main>
   )
