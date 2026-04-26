@@ -10,7 +10,6 @@ import {
   getItems,
   hasOnboarded,
   setArchived,
-  updateTitle,
   type GalleryItem,
 } from "@/lib/gallery";
 
@@ -19,8 +18,6 @@ export default function GalleryHomePage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [firstTime, setFirstTime] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [draftTitle, setDraftTitle] = useState("");
   const [menuId, setMenuId] = useState<string | null>(null);
   const [confirmProjectDelete, setConfirmProjectDelete] = useState<string | null>(null);
 
@@ -69,15 +66,6 @@ export default function GalleryHomePage() {
 
   const renderCard = (it: GalleryItem) => {
     const cover = it.versions[it.versions.length - 1]?.afterUrl ?? it.beforeUrl;
-    const isEditing = editingId === it.id;
-    const commitTitle = () => {
-      const trimmed = draftTitle.trim();
-      if (trimmed && trimmed !== it.title) {
-        updateTitle(it.id, trimmed);
-        setItems(getItems());
-      }
-      setEditingId(null);
-    };
     return (
       <div key={it.id} className="text-left">
         <div className="group relative">
@@ -142,41 +130,7 @@ export default function GalleryHomePage() {
             </div>
           )}
         </div>
-        {isEditing ? (
-          <input
-            autoFocus
-            value={draftTitle}
-            onChange={(e) => setDraftTitle(e.target.value)}
-            onBlur={commitTitle}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                commitTitle();
-              } else if (e.key === "Escape") {
-                setEditingId(null);
-              }
-            }}
-            className="mt-2 w-full rounded-sm border border-border bg-bg px-1 py-0.5 text-lg leading-7 focus:border-accent focus:outline-none"
-          />
-        ) : (
-          <div className="mt-2 flex items-center gap-1.5">
-            <p className="truncate text-lg leading-7 text-fg">{it.title}</p>
-            <button
-              type="button"
-              aria-label="Rename"
-              onClick={() => {
-                setEditingId(it.id);
-                setDraftTitle(it.title);
-              }}
-              className="text-fg-muted hover:text-fg"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
-              </svg>
-            </button>
-          </div>
-        )}
+        <p className="mt-2 truncate text-lg leading-7 text-fg">{it.title}</p>
         <p className="text-xs leading-4 text-fg-muted">
           {it.versions.length} {it.versions.length === 1 ? "version" : "versions"}
         </p>

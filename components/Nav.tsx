@@ -65,17 +65,24 @@ export function Nav({ variant = "primary", backHref, onClose }: Props) {
 }
 
 function PrimaryNav() {
-  const [email, setEmail] = useState<string | null>(null);
+  const [initialSource, setInitialSource] = useState<string | null>(null);
   const used = 0;
 
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
-      setEmail(data.user?.email ?? null);
+      const u = data.user;
+      const meta = (u?.user_metadata ?? {}) as Record<string, unknown>;
+      const fullName =
+        (typeof meta.full_name === "string" && meta.full_name) ||
+        (typeof meta.name === "string" && meta.name) ||
+        null;
+      const firstName = fullName?.trim().split(/\s+/)[0] ?? null;
+      setInitialSource(firstName || u?.email || null);
     });
   }, []);
 
-  const initial = (email?.[0] ?? "M").toUpperCase();
+  const initial = (initialSource?.[0] ?? "M").toUpperCase();
 
   return (
     <nav className="border-b border-border bg-bg">
