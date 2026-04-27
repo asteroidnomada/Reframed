@@ -115,69 +115,91 @@ export default function DirectionPage() {
               </p>
             </header>
 
-            <div className="flex flex-col gap-3">
-              {presets.map((p) => {
-                const active = selected === p.id;
-                return (
+            {selected === null ? (
+              <div className="flex flex-col gap-3">
+                {presets.map((p) => (
                   <button
                     key={p.id}
                     type="button"
                     onClick={() => setSelected(p.id)}
                     disabled={loading}
-                    aria-pressed={active}
-                    className={`flex w-full flex-col items-start gap-2 rounded-md border-2 bg-bg p-4 text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-subtle ${
-                      active ? "border-accent" : "border-border hover:border-border-strong"
-                    }`}
+                    className="flex w-full flex-col items-start gap-2 rounded-md border-2 border-border bg-bg p-4 text-left transition-colors hover:border-border-strong disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-subtle"
                   >
                     <span className="text-sm leading-5 text-fg">{p.title}</span>
                     <span className="text-xs leading-4 text-fg-muted">{p.subtitle}</span>
                   </button>
-                );
-              })}
-            </div>
-          </section>
-
-          <section className="flex flex-col gap-3">
-            <div className="flex flex-col gap-2.5">
-              <header className="flex flex-col gap-1">
-                <h2 className="text-2xl font-medium leading-8 text-fg">
-                  Custom instructions
-                </h2>
-                <p className="text-xs leading-4 text-fg-muted">Optional</p>
-              </header>
-
-              <div className="flex w-full flex-col items-end gap-2">
-                <textarea
-                  id="custom-prompt"
-                  rows={2}
-                  maxLength={500}
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  placeholder="e.g. add plants, brass hardware, warm daylight…"
-                  disabled={loading}
-                  className="w-full resize-none rounded-md border border-border bg-bg px-4 pt-4 pb-10 text-sm leading-5 text-fg placeholder:text-fg-faint focus:border-accent focus:outline-none disabled:opacity-50"
-                />
-                <p className="text-sm leading-5 text-fg-muted">
-                  {customPrompt.length}/500
-                </p>
+                ))}
               </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={onGenerate}
-              disabled={disabled}
-              className="inline-flex w-full items-center justify-center rounded-md bg-accent px-5 py-2 text-sm leading-5 text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-subtle lg:w-auto lg:self-start"
-            >
-              {loading ? "Generating…" : "Generate with AI"}
-            </button>
-
-            {error && (
-              <p role="alert" className="text-sm leading-5 text-red-600">
-                {error}
-              </p>
+            ) : (
+              (() => {
+                const p = presets.find((x) => x.id === selected);
+                if (!p) return null;
+                return (
+                  <div className="flex flex-col items-center gap-3">
+                    <div
+                      aria-pressed="true"
+                      className="flex w-full flex-col items-start gap-2 rounded-md border-2 border-accent bg-bg p-4"
+                    >
+                      <span className="text-sm leading-5 text-fg">{p.title}</span>
+                      <span className="text-xs leading-4 text-fg-muted">{p.subtitle}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSelected(null)}
+                      disabled={loading}
+                      className="text-sm leading-5 text-fg-muted underline-offset-2 hover:text-fg hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Choose different direction
+                    </button>
+                  </div>
+                );
+              })()
             )}
           </section>
+
+          {selected !== null && (
+            <section className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2.5">
+                <header className="flex flex-col gap-1">
+                  <h2 className="text-xl leading-7 text-fg">
+                    Add custom directions
+                  </h2>
+                  <p className="text-xs leading-4 text-fg-muted">Optional</p>
+                </header>
+
+                <div className="flex w-full flex-col items-end gap-2">
+                  <textarea
+                    id="custom-prompt"
+                    rows={2}
+                    maxLength={500}
+                    value={customPrompt}
+                    onChange={(e) => setCustomPrompt(e.target.value)}
+                    placeholder="e.g. add plants, brass hardware, warm daylight…"
+                    disabled={loading}
+                    className="w-full resize-none rounded-md border border-border bg-bg px-4 pt-4 pb-10 text-sm leading-5 text-fg placeholder:text-fg-faint focus:border-accent focus:outline-none disabled:opacity-50"
+                  />
+                  <p className="text-sm leading-5 text-fg-muted">
+                    {customPrompt.length}/500
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={onGenerate}
+                disabled={disabled}
+                className="inline-flex w-full items-center justify-center rounded-md bg-accent px-5 py-2 text-sm leading-5 text-white transition-colors hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-subtle lg:w-auto lg:self-start"
+              >
+                {loading ? "Generating…" : "Generate with AI"}
+              </button>
+
+              {error && (
+                <p role="alert" className="text-sm leading-5 text-red-600">
+                  {error}
+                </p>
+              )}
+            </section>
+          )}
         </div>
       </main>
     </div>

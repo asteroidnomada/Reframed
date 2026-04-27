@@ -17,7 +17,7 @@ type Props = {
 export function Nav({ variant = "primary", backHref, onClose }: Props) {
   if (variant === "secondary") {
     return (
-      <nav className="border-b border-border bg-bg">
+      <nav className="sticky top-0 z-30 border-b border-border bg-bg">
         <div className="relative flex w-full items-center justify-between px-6 pt-2 pb-[9px] lg:px-20">
           {backHref ? (
             <Link
@@ -85,7 +85,7 @@ function PrimaryNav() {
   const initial = (initialSource?.[0] ?? "M").toUpperCase();
 
   return (
-    <nav className="border-b border-border bg-bg">
+    <nav className="sticky top-0 z-30 border-b border-border bg-bg">
       <div className="flex w-full items-center justify-between px-6 pt-3 pb-[13px] lg:px-20">
         <Link
           href="/"

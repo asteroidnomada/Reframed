@@ -126,9 +126,10 @@ export default function AccountPage() {
                   </div>
                   <button
                     type="button"
-                    className="inline-flex shrink-0 items-center justify-center rounded-md bg-accent px-3 py-1 text-sm leading-5 text-white transition-colors hover:bg-accent-hover"
+                    disabled
+                    className="inline-flex shrink-0 items-center justify-center rounded-md bg-accent px-3 py-1 text-sm leading-5 text-white disabled:cursor-not-allowed"
                   >
-                    Upgrade now
+                    Coming soon
                   </button>
                 </div>
               </div>

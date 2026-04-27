@@ -7,7 +7,6 @@ import {
   deleteVersion,
   getItems,
   updateTitle,
-  updateVersionTitle,
   type GalleryItem,
 } from "@/lib/gallery";
 
@@ -39,8 +38,6 @@ export default function ProjectDetailsPage() {
   const [view, setView] = useState<View>({ kind: "before" });
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState("");
-  const [editingVersionIdx, setEditingVersionIdx] = useState<number | null>(null);
-  const [versionDraft, setVersionDraft] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
   useEffect(() => {
@@ -61,11 +58,10 @@ export default function ProjectDetailsPage() {
         return;
       }
       if (editingTitle) setEditingTitle(false);
-      if (editingVersionIdx !== null) setEditingVersionIdx(null);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [confirmDelete, editingTitle, editingVersionIdx]);
+  }, [confirmDelete, editingTitle]);
 
   const item = items.find((i) => i.id === id) ?? null;
 
@@ -94,9 +90,7 @@ export default function ProjectDetailsPage() {
   const currentImageUrl =
     view.kind === "before" ? item.beforeUrl : currentVersion?.afterUrl ?? item.beforeUrl;
   const versionLabel =
-    view.kind === "before"
-      ? "Before"
-      : currentVersion?.title?.trim() || `Version ${view.index + 1}`;
+    view.kind === "before" ? "Before" : `After v${view.index + 1}`;
   const isAfterView = view.kind === "version" && currentVersion !== null;
 
   const commitTitle = () => {
@@ -106,16 +100,6 @@ export default function ProjectDetailsPage() {
       setItems(getItems());
     }
     setEditingTitle(false);
-  };
-
-  const commitVersionTitle = () => {
-    if (view.kind !== "version") {
-      setEditingVersionIdx(null);
-      return;
-    }
-    updateVersionTitle(item.id, view.index, versionDraft);
-    setItems(getItems());
-    setEditingVersionIdx(null);
   };
 
   const onCreateNewVersion = () => {
@@ -214,10 +198,10 @@ export default function ProjectDetailsPage() {
   );
 
   const thumbStripEl = hasVersions ? (
-    <div className="flex items-start gap-2 overflow-x-auto">
+    <div className="flex items-start gap-2 overflow-x-auto px-1 py-3">
       {item.versions.map((v, i) => {
         const selected = view.kind === "version" && view.index === i;
-        const label = v.title?.trim() || `Version ${i + 1}`;
+        const label = `v${i + 1}`;
         return (
           <div key={i} className="group relative flex w-[79px] shrink-0 flex-col items-start gap-[9px]">
             <button
@@ -256,42 +240,7 @@ export default function ProjectDetailsPage() {
   ) : null;
 
   const versionLabelEl = (
-    <div className="flex items-center gap-2">
-      {editingVersionIdx !== null && view.kind === "version" ? (
-        <input
-          autoFocus
-          value={versionDraft}
-          onChange={(e) => setVersionDraft(e.target.value)}
-          onBlur={commitVersionTitle}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              commitVersionTitle();
-            } else if (e.key === "Escape") {
-              setEditingVersionIdx(null);
-            }
-          }}
-          className="rounded-sm border border-border bg-bg px-2 py-0.5 text-2xl font-medium leading-8 focus:border-accent focus:outline-none"
-        />
-      ) : (
-        <>
-          <h2 className="text-2xl font-medium leading-8 text-fg">{versionLabel}</h2>
-          {view.kind === "version" && (
-            <button
-              type="button"
-              aria-label="Rename version"
-              onClick={() => {
-                setVersionDraft(versionLabel);
-                setEditingVersionIdx(view.index);
-              }}
-              className="text-fg-muted hover:text-fg"
-            >
-              <PencilIcon />
-            </button>
-          )}
-        </>
-      )}
-    </div>
+    <h2 className="text-2xl font-medium leading-8 text-fg">{versionLabel}</h2>
   );
 
   const calloutEl = (
@@ -390,9 +339,11 @@ export default function ProjectDetailsPage() {
             )}
             {isAfterView ? (
               <>
-                {versionLabelEl}
+                <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between xl:gap-4">
+                  {versionLabelEl}
+                  {downloadButtonEl}
+                </div>
                 {calloutEl}
-                {downloadButtonEl}
               </>
             ) : (
               <div className="xl:hidden">{createButtonEl}</div>

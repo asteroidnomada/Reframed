@@ -8,7 +8,6 @@ import { Button } from "@/components/Button";
 import {
   deleteItem,
   getItems,
-  hasOnboarded,
   setArchived,
   type GalleryItem,
 } from "@/lib/gallery";
@@ -17,13 +16,11 @@ export default function GalleryHomePage() {
   const router = useRouter();
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
-  const [firstTime, setFirstTime] = useState(false);
   const [menuId, setMenuId] = useState<string | null>(null);
   const [confirmProjectDelete, setConfirmProjectDelete] = useState<string | null>(null);
 
   useEffect(() => {
     setItems(getItems());
-    setFirstTime(!hasOnboarded());
     setHydrated(true);
   }, []);
 
@@ -138,53 +135,6 @@ export default function GalleryHomePage() {
     );
   };
 
-  if (hydrated && firstTime) {
-    return (
-      <div className="min-h-screen bg-bg-subtle">
-        <Nav />
-        <main className="w-full px-6 pt-10 pb-24 lg:px-20">
-          <div className="flex max-w-[552px] flex-col gap-6">
-            <div className="flex flex-col gap-3">
-              <div className="flex items-baseline gap-3 whitespace-nowrap">
-                <h1 className="text-2xl font-medium leading-8 text-fg">Your gallery</h1>
-                <p className="text-sm leading-5 text-fg-muted">0 uploads</p>
-              </div>
-              <div
-                className="flex items-center gap-2 opacity-50 pointer-events-none"
-                aria-hidden="true"
-              >
-                <span className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-[13px] font-medium leading-none text-white">
-                  All
-                </span>
-                <span className="inline-flex items-center justify-center rounded-full border border-border bg-bg px-4 py-2 text-[13px] font-medium leading-none text-fg">
-                  Recent
-                </span>
-                <span className="inline-flex items-center justify-center rounded-full border border-border bg-bg px-4 py-2 text-[13px] font-medium leading-none text-fg">
-                  Archived
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-start gap-6 rounded-lg bg-bg p-6">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl leading-7 text-fg">Get started for free</h2>
-                <p className="text-sm leading-5 text-fg-muted">
-                  Upload a photo of your retail commercial space to see your space transform into a coffee shop co-working space. You get 3 free credits per month.
-                </p>
-              </div>
-              <Link
-                href="/upload"
-                className="inline-flex items-center justify-center rounded-md bg-accent px-5 py-2 text-sm leading-5 text-white hover:bg-accent-hover"
-              >
-                Upload now
-              </Link>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-bg-subtle">
       <Nav />
@@ -200,36 +150,64 @@ export default function GalleryHomePage() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              {(["all", "recent", "archived"] as const).map((key) => {
-                const active = filter === key;
-                const label = key === "all" ? "All" : key === "recent" ? "Recent" : "Archived";
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setFilter(key)}
-                    aria-pressed={active}
-                    className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-[13px] font-medium leading-none transition-colors ${
-                      active
-                        ? "bg-accent text-white"
-                        : "border border-border bg-bg text-fg hover:border-border-strong"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+              {hydrated && items.length === 0
+                ? (["recent", "archived", "all"] as const).map((key) => {
+                    const label = key === "all" ? "All" : key === "recent" ? "Recent" : "Archived";
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        disabled
+                        aria-disabled="true"
+                        className="inline-flex items-center justify-center rounded-full border border-border bg-bg px-4 py-2 text-[13px] font-medium leading-none text-fg opacity-50"
+                      >
+                        {label}
+                      </button>
+                    );
+                  })
+                : (["all", "recent", "archived"] as const).map((key) => {
+                    const active = filter === key;
+                    const label = key === "all" ? "All" : key === "recent" ? "Recent" : "Archived";
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setFilter(key)}
+                        aria-pressed={active}
+                        className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-[13px] font-medium leading-none transition-colors ${
+                          active
+                            ? "bg-accent text-white"
+                            : "border border-border bg-bg text-fg hover:border-border-strong"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
             </div>
           </div>
 
           {hydrated && items.length === 0 ? (
-            <div className="mt-10 flex flex-col items-center text-center">
-              <h2 className="text-lg font-semibold">No reframes yet</h2>
-              <p className="mt-2 max-w-sm text-sm text-fg-muted">
-                Upload a photo of your space to see it in a new direction.
-              </p>
-              <Link href="/upload" className="mt-6">
-                <Button>Upload a photo</Button>
+            <div className="flex w-full flex-col items-start gap-6 rounded-lg bg-bg p-6">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icons/gallery-empty.svg"
+                alt=""
+                width={42}
+                height={48}
+                aria-hidden="true"
+              />
+              <div className="flex flex-col gap-2">
+                <h2 className="text-xl leading-7 text-fg">Get started for free</h2>
+                <p className="text-sm leading-5 text-fg-muted">
+                  Upload a photo of your retail commercial space to see your space transform into a coffee shop co-working space. You get 3 free credits per month.
+                </p>
+              </div>
+              <Link
+                href="/upload"
+                className="inline-flex items-center justify-center rounded-md bg-accent px-5 py-2 text-sm leading-5 text-white hover:bg-accent-hover"
+              >
+                Upload now
               </Link>
             </div>
           ) : hydrated && visibleItems.length === 0 ? (

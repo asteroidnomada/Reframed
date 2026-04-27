@@ -115,6 +115,14 @@ export default function UploadPage() {
               className="hidden"
               onChange={(e) => void handleFiles(e.target.files)}
             />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/icons/upload-placeholder.svg"
+              alt=""
+              width={74}
+              height={74}
+              aria-hidden="true"
+            />
             <div className="flex w-full flex-col items-center gap-2">
               <p className="w-full text-lg leading-7 text-fg">
                 Select a photo or drag and drop
