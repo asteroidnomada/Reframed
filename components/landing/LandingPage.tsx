@@ -122,7 +122,7 @@ export default function LandingPage() {
             Login
           </Link>
           <Link
-            href="/login?mode=sign-up"
+            href="/signup"
             className="bg-fg text-bg text-sm font-medium px-5 py-[11px] rounded-sm hover:bg-accent-hover transition-colors"
           >
             Sign up
@@ -138,7 +138,7 @@ export default function LandingPage() {
             coffee shop.
           </h1>
           <Link
-            href="/login?mode=sign-up"
+            href="/signup"
             className="bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors"
           >
             Try for free
@@ -309,7 +309,7 @@ export default function LandingPage() {
                 </ul>
               </div>
               <Link
-                href="/login?mode=sign-up"
+                href="/signup"
                 className="bg-fg text-bg text-[15px] font-medium inline-flex items-center justify-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors w-full"
               >
                 Try for free
@@ -450,7 +450,7 @@ export default function LandingPage() {
           Ready to dream up your new space?
         </h2>
         <Link
-          href="/login?mode=sign-up"
+          href="/signup"
           className="bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors"
         >
           Try for free
