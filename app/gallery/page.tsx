@@ -46,7 +46,7 @@ export default function GalleryHomePage() {
     return () => window.removeEventListener("mousedown", onDown);
   }, [menuId]);
 
-  const [filter, setFilter] = useState<"all" | "recent" | "archived">("all");
+  const [filter, setFilter] = useState<"all" | "recent" | "archived">("recent");
 
   const visibleItems = useMemo(() => {
     if (filter === "archived") return items.filter((i) => i.archived);
@@ -165,7 +165,7 @@ export default function GalleryHomePage() {
                       </button>
                     );
                   })
-                : (["all", "recent", "archived"] as const).map((key) => {
+                : (["recent", "archived", "all"] as const).map((key) => {
                     const active = filter === key;
                     const label = key === "all" ? "All" : key === "recent" ? "Recent" : "Archived";
                     return (
