@@ -27,7 +27,7 @@ export default function LoginPage() {
       if (mode === "sign-in") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        router.push("/");
+        router.push("/gallery");
         router.refresh();
       } else if (mode === "sign-up") {
         const { error } = await supabase.auth.signUp({

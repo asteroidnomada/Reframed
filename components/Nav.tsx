@@ -34,7 +34,7 @@ export function Nav({ variant = "primary", backHref, onClose }: Props) {
             <span aria-hidden className="py-3 text-sm leading-5 invisible">Back</span>
           )}
           <Link
-            href="/"
+            href="/gallery"
             className="absolute left-1/2 -translate-x-1/2 text-lg font-semibold leading-7 tracking-[-0.5px] text-fg"
           >
             Reframed
@@ -88,7 +88,7 @@ function PrimaryNav() {
     <nav className="sticky top-0 z-30 border-b border-border bg-bg">
       <div className="flex w-full items-center justify-between px-6 pt-3 pb-[13px] lg:px-20">
         <Link
-          href="/"
+          href="/gallery"
           className="text-lg font-semibold leading-7 tracking-[-0.5px] text-fg"
         >
           Reframed

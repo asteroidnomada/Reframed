@@ -90,7 +90,7 @@ export default function DirectionPage() {
         });
         sessionStorage.removeItem("reframed:reframe");
       }
-      router.push("/");
+      router.push("/gallery");
     } catch (err) {
       setError((err as Error).message);
       setLoading(false);
@@ -102,7 +102,7 @@ export default function DirectionPage() {
   return (
     <div className="min-h-screen bg-bg-subtle">
       {loading && <GeneratingOverlay />}
-      <Nav variant="secondary" backHref="/upload" onClose={() => router.push("/")} />
+      <Nav variant="secondary" backHref="/upload" onClose={() => router.push("/gallery")} />
       <main className="mx-auto w-full max-w-[552px] px-6 pt-10 pb-24 lg:px-0 lg:pb-40">
         <div className="flex flex-col gap-10">
           <section className="flex flex-col gap-4">
