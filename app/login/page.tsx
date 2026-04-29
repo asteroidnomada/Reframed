@@ -8,10 +8,17 @@ import { createClient } from "@/lib/supabase/client";
 
 type Mode = "sign-in" | "sign-up" | "reset";
 
+const readInitialMode = (): Mode => {
+  if (typeof window === "undefined") return "sign-in";
+  return new URLSearchParams(window.location.search).get("mode") === "sign-up"
+    ? "sign-up"
+    : "sign-in";
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
-  const [mode, setMode] = useState<Mode>("sign-in");
+  const [mode, setMode] = useState<Mode>(readInitialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

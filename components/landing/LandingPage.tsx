@@ -122,7 +122,7 @@ export default function LandingPage() {
             Login
           </Link>
           <Link
-            href="/login"
+            href="/login?mode=sign-up"
             className="bg-fg text-bg text-sm font-medium px-5 py-[11px] rounded-sm hover:bg-accent-hover transition-colors"
           >
             Sign up
@@ -138,7 +138,7 @@ export default function LandingPage() {
             coffee shop.
           </h1>
           <Link
-            href="/login"
+            href="/login?mode=sign-up"
             className="bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors"
           >
             Try for free
@@ -309,7 +309,7 @@ export default function LandingPage() {
                 </ul>
               </div>
               <Link
-                href="/login"
+                href="/login?mode=sign-up"
                 className="bg-fg text-bg text-[15px] font-medium inline-flex items-center justify-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors w-full"
               >
                 Try for free
@@ -380,7 +380,7 @@ export default function LandingPage() {
         </div>
         <div
           ref={carouselRef}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-6 md:-mx-24 px-6 md:px-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mr-6 md:-mr-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {FEATURE_CARDS.map((card) => (
             <div
@@ -450,7 +450,7 @@ export default function LandingPage() {
           Ready to dream up your new space?
         </h2>
         <Link
-          href="/login"
+          href="/login?mode=sign-up"
           className="bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors"
         >
           Try for free
