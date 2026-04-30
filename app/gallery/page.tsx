@@ -145,7 +145,7 @@ export default function GalleryHomePage() {
               <h1 className="text-2xl font-medium leading-8 text-fg">Your gallery</h1>
               <p className="text-sm leading-5 text-fg-muted">
                 {hydrated
-                  ? `${visibleItems.length} ${filter === "archived" ? "project" : "upload"}${visibleItems.length === 1 ? "" : "s"}`
+                  ? `${visibleItems.length} upload${visibleItems.length === 1 ? "" : "s"}`
                   : "\u00a0"}
               </p>
             </div>
