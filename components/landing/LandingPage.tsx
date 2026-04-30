@@ -102,7 +102,7 @@ export default function LandingPage() {
   return (
     <div className="bg-bg text-fg font-sans flex flex-col items-stretch min-h-screen">
       {/* Nav */}
-      <nav className="relative h-16 flex items-center justify-between px-5 md:px-28 w-full">
+      <nav className="sticky top-0 z-40 h-16 flex items-center justify-between bg-bg/85 backdrop-blur supports-[backdrop-filter]:bg-bg/85 px-5 md:px-28 w-full border-b border-transparent">
         <Link
           href="/"
           className="text-[18px] font-bold tracking-[-0.36px]"
@@ -392,7 +392,7 @@ export default function LandingPage() {
             <div
               key={card.alt}
               data-card
-              className="flex gap-6 h-[400px] md:h-[500px] flex-shrink-0 w-[80vw] md:w-[624px] snap-start"
+              className="flex gap-6 h-[342px] md:h-[500px] flex-shrink-0 w-[624px] snap-start"
             >
               <div className="relative flex-1 overflow-hidden">
                 <Image
