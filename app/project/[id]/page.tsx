@@ -265,7 +265,7 @@ export default function ProjectDetailsPage() {
       onClick={onCreateNewVersion}
       className="inline-flex w-full items-center justify-center rounded-md border border-border bg-bg px-5 py-2 text-sm leading-5 text-fg transition-colors hover:border-border-strong"
     >
-      Create a new version
+      Generate new
     </button>
   );
 
