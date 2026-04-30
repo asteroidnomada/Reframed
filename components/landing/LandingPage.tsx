@@ -28,14 +28,20 @@ const FEATURE_CARDS: Array<{
   {
     before: "/landing/v2/feat-2-before.png",
     after: "/landing/v2/feat-2-after.png",
-    alt: "Warm café reframe",
-    tag: "Warm Café",
+    alt: "Industrial co-working café reframe",
+    tag: "Industrial",
   },
   {
     before: "/landing/v2/feat-3-before.png",
     after: "/landing/v2/feat-3-after.png",
     alt: "Minimalist reframe",
     tag: "Minimalist",
+  },
+  {
+    before: "/landing/v2/feat-4-before.png",
+    after: "/landing/v2/feat-4-after.png",
+    alt: "Scandinavian reframe",
+    tag: "Scandinavian",
   },
 ];
 
@@ -476,9 +482,6 @@ export default function LandingPage() {
               <p className="text-[12px] font-medium tracking-[0.36px]">PRODUCT</p>
               <a href="#how-it-works" className="text-[14px] hover:opacity-80">
                 How it works
-              </a>
-              <a href="#" className="text-[14px] hover:opacity-80">
-                Features
               </a>
               <a href="#pricing" className="text-[14px] hover:opacity-80">
                 Pricing
