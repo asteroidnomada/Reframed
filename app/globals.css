@@ -10,3 +10,84 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+@layer utilities {
+  /* Scroll-reveal: starts hidden + translated, becomes visible when [data-revealed="true"] */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .reveal[data-revealed="true"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Ken-Burns slow drift for step 03 cafe image */
+  .ken-burns {
+    animation: kenBurns 18s ease-in-out infinite alternate;
+    transform-origin: center;
+  }
+  @keyframes kenBurns {
+    from {
+      transform: scale(1.04) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.12) translate3d(-1.5%, -1%, 0);
+    }
+  }
+
+  /* Gentle arrow bob in the upload dropzone */
+  .bob {
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+
+  /* Soft dashed-border breathing on the dropzone */
+  .breath {
+    animation: breath 3.6s ease-in-out infinite;
+  }
+  @keyframes breath {
+    0%,
+    100% {
+      border-color: rgba(229, 228, 226, 1);
+    }
+    50% {
+      border-color: rgba(15, 15, 15, 0.45);
+    }
+  }
+
+  /* Fade swap used by preset list rows when the active row changes */
+  .fade-swap {
+    transition:
+      background-color 500ms ease,
+      color 500ms ease,
+      opacity 500ms ease,
+      border-color 500ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal[data-revealed="true"] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .ken-burns,
+    .bob,
+    .breath {
+      animation: none !important;
+    }
+  }
+}

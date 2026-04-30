@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Reveal from "./Reveal";
 
-const PRESETS: Array<{ name: string; desc: string; active?: boolean }> = [
+const PRESETS: Array<{ name: string; desc: string }> = [
   { name: "Minimalist", desc: "Clean · light wood" },
-  { name: "Warm Café", desc: "Warm wood · soft lamps", active: true },
+  { name: "Warm Café", desc: "Warm wood · soft lamps" },
   { name: "Mid-Century", desc: "Walnut · ochre" },
   { name: "Japandi", desc: "Pale wood · stone" },
   { name: "Industrial", desc: "Concrete · steel" },
@@ -76,8 +77,15 @@ const Check = () => (
   </svg>
 );
 
-const ArrowUp = () => (
-  <svg width="32" height="40" viewBox="0 0 32 40" fill="none" aria-hidden="true">
+const ArrowUp = ({ className = "" }: { className?: string }) => (
+  <svg
+    className={className}
+    width="32"
+    height="40"
+    viewBox="0 0 32 40"
+    fill="none"
+    aria-hidden="true"
+  >
     <path
       d="M16 36V4M16 4 4 16M16 4l12 12"
       stroke="currentColor"
@@ -90,6 +98,18 @@ const ArrowUp = () => (
 
 export default function LandingPage() {
   const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [activePreset, setActivePreset] = useState(1);
+
+  useEffect(() => {
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    const id = window.setInterval(() => {
+      setActivePreset((i) => (i + 1) % PRESETS.length);
+    }, 2200);
+    return () => window.clearInterval(id);
+  }, []);
 
   const scrollCarousel = useCallback((dir: 1 | -1) => {
     const el = carouselRef.current;
@@ -103,20 +123,26 @@ export default function LandingPage() {
     <div className="bg-bg text-fg font-sans flex flex-col items-stretch min-h-screen">
       {/* Nav */}
       <nav className="sticky top-0 z-40 h-16 flex items-center justify-between bg-bg/85 backdrop-blur supports-[backdrop-filter]:bg-bg/85 px-5 md:px-28 w-full border-b border-transparent">
-        <Link
-          href="/"
-          className="text-[18px] font-bold tracking-[-0.36px]"
-        >
+        <Link href="/" className="text-[18px] font-bold tracking-[-0.36px]">
           Reframed
         </Link>
         <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex items-center gap-8 text-sm font-medium [&>a]:pointer-events-auto">
-          <a href="#how-it-works" className="hover:text-fg-muted transition-colors">
+          <a
+            href="#how-it-works"
+            className="relative hover:text-fg-muted transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
+          >
             How it works
           </a>
-          <a href="#pricing" className="hover:text-fg-muted transition-colors">
+          <a
+            href="#pricing"
+            className="relative hover:text-fg-muted transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
+          >
             Pricing
           </a>
-          <a href="#about" className="hover:text-fg-muted transition-colors">
+          <a
+            href="#about"
+            className="relative hover:text-fg-muted transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
+          >
             About
           </a>
         </div>
@@ -129,7 +155,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/signup"
-            className="bg-fg text-bg text-sm font-medium px-5 py-[11px] rounded-sm hover:bg-accent-hover transition-colors"
+            className="group bg-fg text-bg text-sm font-medium px-5 py-[11px] rounded-sm hover:bg-accent-hover transition-all duration-300 active:scale-[0.98]"
           >
             Sign up
           </Link>
@@ -139,40 +165,56 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="bg-bg flex flex-col items-center gap-10 pt-20 md:pt-20 px-6 md:px-24 w-full">
         <div className="order-2 md:order-1 flex flex-col items-center gap-6 w-full">
-          <h1 className="text-[24px] md:text-[48px] font-semibold leading-tight text-center max-w-[920px]">
-            Turn your empty space into a<br className="hidden md:block" /> co-working
-            coffee shop.
-          </h1>
-          <Link
-            href="/signup"
-            className="bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors"
-          >
-            Try for free
-            <ArrowRight />
-          </Link>
+          <Reveal as="div" className="w-full flex justify-center">
+            <h1 className="text-[24px] md:text-[48px] font-semibold leading-tight text-center max-w-[920px]">
+              Turn your empty space into a<br className="hidden md:block" /> co-working
+              coffee shop.
+            </h1>
+          </Reveal>
+          <Reveal delay={140}>
+            <Link
+              href="/signup"
+              className="group bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-all duration-300 hover:shadow-md active:scale-[0.98]"
+            >
+              Try for free
+              <span className="inline-flex transition-transform duration-300 group-hover:translate-x-1">
+                <ArrowRight />
+              </span>
+            </Link>
+          </Reveal>
         </div>
-        {/* Mobile hero image (cropped portrait crop) */}
-        <div className="order-1 md:hidden relative w-[286px] aspect-[286/336] rounded-t-2xl border border-b-0 border-[#d4d4d4] overflow-hidden">
-          <Image
-            src="/landing/v2/hero-app-mobile.png"
-            alt="Reframed gallery preview"
-            fill
-            sizes="286px"
-            className="object-cover object-top"
-            priority
-          />
-        </div>
+        {/* Mobile hero image */}
+        <Reveal
+          delay={260}
+          className="order-1 md:hidden w-[286px]"
+        >
+          <div className="relative w-[286px] aspect-[286/336] rounded-t-2xl border border-b-0 border-[#d4d4d4] overflow-hidden">
+            <Image
+              src="/landing/v2/hero-app-mobile.png"
+              alt="Reframed gallery preview"
+              fill
+              sizes="286px"
+              className="object-cover object-top"
+              priority
+            />
+          </div>
+        </Reveal>
         {/* Desktop hero image */}
-        <div className="hidden md:block order-2 relative w-full max-w-[1249px] aspect-[1249/490] rounded-t-2xl border border-b-0 border-border overflow-hidden">
-          <Image
-            src="/landing/v2/hero-app.png"
-            alt="Reframed gallery preview"
-            fill
-            sizes="(max-width: 1249px) 100vw, 1249px"
-            className="object-cover object-top"
-            priority
-          />
-        </div>
+        <Reveal
+          delay={260}
+          className="hidden md:block order-2 w-full max-w-[1249px]"
+        >
+          <div className="relative w-full aspect-[1249/490] rounded-t-2xl border border-b-0 border-border overflow-hidden shadow-md">
+            <Image
+              src="/landing/v2/hero-app.png"
+              alt="Reframed gallery preview"
+              fill
+              sizes="(max-width: 1249px) 100vw, 1249px"
+              className="object-cover object-top"
+              priority
+            />
+          </div>
+        </Reveal>
       </section>
 
       {/* How It Works */}
@@ -180,17 +222,19 @@ export default function LandingPage() {
         id="how-it-works"
         className="flex flex-col gap-10 px-6 md:px-24 py-20 md:py-24 w-full"
       >
-        <div className="flex flex-col items-center gap-4 text-center">
+        <Reveal className="flex flex-col items-center gap-4 text-center">
           <h2 className="text-[24px] md:text-[40px] font-semibold">How it works</h2>
           <p className="text-[18px] md:text-[24px] text-fg">
             Crafted by AI using a blend of six unique presets.
           </p>
-        </div>
+        </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Step 01 */}
-          <div className="flex flex-col gap-6">
-            <div className="bg-bg border-[1.5px] border-dashed border-border h-[300px] rounded-sm flex flex-col items-center justify-center gap-2 text-fg-muted">
-              <ArrowUp />
+          <Reveal delay={0} className="flex flex-col gap-6">
+            <div className="bg-bg border-[1.5px] border-dashed border-border breath h-[300px] rounded-sm flex flex-col items-center justify-center gap-2 text-fg-muted">
+              <span className="bob">
+                <ArrowUp />
+              </span>
               <p className="text-[11px] font-medium tracking-[0.88px]">
                 DRAG PHOTO HERE
               </p>
@@ -201,32 +245,41 @@ export default function LandingPage() {
               </p>
               <p className="text-[20px]">Upload a photo of your space</p>
             </div>
-          </div>
+          </Reveal>
 
           {/* Step 02 */}
-          <div className="flex flex-col gap-6">
+          <Reveal delay={120} className="flex flex-col gap-6">
             <div className="bg-bg flex flex-col gap-2 h-[300px] p-4 rounded-sm overflow-hidden">
-              {PRESETS.map((p) => {
-                if (p.active) {
-                  return (
-                    <div
-                      key={p.name}
-                      className="bg-[#14110e] border border-[#14110e] flex items-center justify-between h-10 px-[14px] py-[10px] rounded-md"
-                    >
-                      <span className="text-[#fbf8f3] text-[13px]">{p.name}</span>
-                      <span className="text-[11px] text-[rgba(251,248,243,0.6)]">
-                        {p.desc}
-                      </span>
-                    </div>
-                  );
-                }
+              {PRESETS.map((p, i) => {
+                const isActive = i === activePreset;
                 return (
                   <div
                     key={p.name}
-                    className="bg-[#f4f0ea] border border-[rgba(20,17,14,0.12)] flex items-center justify-between px-[14px] py-[10px] rounded-md opacity-50"
+                    className={
+                      "fade-swap flex items-center justify-between h-10 px-[14px] py-[10px] rounded-md border " +
+                      (isActive
+                        ? "bg-[#14110e] border-[#14110e] opacity-100"
+                        : "bg-[#f4f0ea] border-[rgba(20,17,14,0.12)] opacity-50")
+                    }
                   >
-                    <span className="text-[#14110e] text-[13px]">{p.name}</span>
-                    <span className="text-[#6b635a] text-[11px]">{p.desc}</span>
+                    <span
+                      className={
+                        "fade-swap text-[13px] " +
+                        (isActive ? "text-[#fbf8f3]" : "text-[#14110e]")
+                      }
+                    >
+                      {p.name}
+                    </span>
+                    <span
+                      className={
+                        "fade-swap text-[11px] " +
+                        (isActive
+                          ? "text-[rgba(251,248,243,0.6)]"
+                          : "text-[#6b635a]")
+                      }
+                    >
+                      {p.desc}
+                    </span>
                   </div>
                 );
               })}
@@ -237,17 +290,17 @@ export default function LandingPage() {
               </p>
               <p className="text-[20px]">Choose a style preset</p>
             </div>
-          </div>
+          </Reveal>
 
           {/* Step 03 */}
-          <div className="flex flex-col gap-6">
+          <Reveal delay={240} className="flex flex-col gap-6">
             <div className="relative h-[300px] rounded-sm overflow-hidden">
               <Image
                 src="/landing/v2/step-3-cafe.png"
                 alt="AI-generated café reframe"
                 fill
                 sizes="(max-width: 768px) 100vw, 400px"
-                className="object-cover"
+                className="object-cover ken-burns"
               />
               <div className="absolute left-4 bottom-4 flex gap-2 items-center">
                 <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
@@ -264,7 +317,7 @@ export default function LandingPage() {
               </p>
               <p className="text-[20px]">Let AI handle the rest</p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -274,17 +327,20 @@ export default function LandingPage() {
         className="flex justify-center px-6 md:px-24 py-20 w-full"
       >
         <div className="flex flex-col items-center gap-10 w-full">
-          <div className="flex flex-col items-center gap-4 text-center max-w-[760px]">
+          <Reveal className="flex flex-col items-center gap-4 text-center max-w-[760px]">
             <h2 className="text-[24px] md:text-[40px] font-semibold">
               Simple pricing, no extra fees
             </h2>
             <p className="text-[18px] md:text-[24px]">
               Get 3 free credits each month—one credit lets you upload one file!
             </p>
-          </div>
+          </Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-[816px]">
             {/* Free */}
-            <div className="bg-bg border border-border-strong rounded-sm flex flex-col gap-6 px-10 py-8">
+            <Reveal
+              delay={80}
+              className="bg-bg border border-border-strong rounded-sm flex flex-col gap-6 px-10 py-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+            >
               <p className="text-[16px]">Free</p>
               <div className="flex items-baseline gap-1 h-12">
                 <span className="text-[28px] text-fg-faint">$</span>
@@ -316,15 +372,20 @@ export default function LandingPage() {
               </div>
               <Link
                 href="/signup"
-                className="bg-fg text-bg text-[15px] font-medium inline-flex items-center justify-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors w-full"
+                className="group bg-fg text-bg text-[15px] font-medium inline-flex items-center justify-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-all duration-300 active:scale-[0.98] w-full"
               >
                 Try for free
-                <ArrowRight />
+                <span className="inline-flex transition-transform duration-300 group-hover:translate-x-1">
+                  <ArrowRight />
+                </span>
               </Link>
-            </div>
+            </Reveal>
 
             {/* Pro (Coming soon) */}
-            <div className="bg-bg border border-border rounded-sm flex flex-col gap-6 px-10 py-8">
+            <Reveal
+              delay={180}
+              className="bg-bg border border-border rounded-sm flex flex-col gap-6 px-10 py-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+            >
               <p className="text-[16px]">Pro (Coming soon)</p>
               <div className="flex items-baseline gap-1 opacity-50">
                 <span className="text-[28px] text-fg-muted">$</span>
@@ -369,63 +430,68 @@ export default function LandingPage() {
               >
                 Join the waitlist →
               </button>
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
       {/* Features carousel */}
       <section className="flex flex-col gap-10 px-6 md:px-24 py-20 w-full overflow-hidden">
-        <div className="flex flex-col gap-4">
+        <Reveal className="flex flex-col gap-4">
           <h2 className="text-[24px] md:text-[40px] font-semibold leading-tight text-[#14110e]">
             Check out these reimagined<br />co-working coffee shops
           </h2>
           <p className="text-[18px] md:text-[24px] text-[rgba(20,17,14,0.5)]">
             Generated using Nano Banana 3
           </p>
-        </div>
+        </Reveal>
         <div
           ref={carouselRef}
           className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mr-6 md:-mr-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {FEATURE_CARDS.map((card) => (
-            <div
-              key={card.alt}
-              data-card
-              className="flex gap-6 h-[342px] md:h-[500px] flex-shrink-0 w-[624px] snap-start"
+          {FEATURE_CARDS.map((card, i) => (
+            <Reveal
+              key={card.alt + i}
+              delay={i * 90}
+              className="snap-start flex-shrink-0"
             >
-              <div className="relative flex-1 overflow-hidden">
-                <Image
-                  src={card.before}
-                  alt={`${card.alt} — before`}
-                  fill
-                  sizes="(max-width: 768px) 40vw, 300px"
-                  className="object-cover"
-                />
-                <div className="absolute left-4 bottom-5 flex gap-2 items-center">
-                  <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
-                    Before
-                  </span>
+              <div
+                data-card
+                className="group flex gap-6 h-[342px] md:h-[500px] w-[624px] transition-transform duration-500 hover:-translate-y-1"
+              >
+                <div className="relative flex-1 overflow-hidden">
+                  <Image
+                    src={card.before}
+                    alt={`${card.alt} — before`}
+                    fill
+                    sizes="(max-width: 768px) 40vw, 300px"
+                    className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                  />
+                  <div className="absolute left-4 bottom-5 flex gap-2 items-center">
+                    <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
+                      Before
+                    </span>
+                  </div>
+                </div>
+                <div className="relative flex-1 overflow-hidden">
+                  <Image
+                    src={card.after}
+                    alt={`${card.alt} — after`}
+                    fill
+                    sizes="(max-width: 768px) 40vw, 300px"
+                    className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                  />
+                  <div className="absolute left-4 bottom-5 flex gap-2 items-center">
+                    <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
+                      After
+                    </span>
+                    <span className="bg-bg border border-border text-fg text-[12px] font-medium px-2 py-1 rounded-md">
+                      {card.tag}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="relative flex-1 overflow-hidden">
-                <Image
-                  src={card.after}
-                  alt={`${card.alt} — after`}
-                  fill
-                  sizes="(max-width: 768px) 40vw, 300px"
-                  className="object-cover"
-                />
-                <div className="absolute left-4 bottom-5 flex gap-2 items-center">
-                  <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
-                    After
-                  </span>
-                  <span className="bg-bg border border-border text-fg text-[12px] font-medium px-2 py-1 rounded-md">
-                    {card.tag}
-                  </span>
-                </div>
-              </div>
-            </div>
+            </Reveal>
           ))}
         </div>
         <div className="flex items-center justify-center gap-2.5">
@@ -433,7 +499,7 @@ export default function LandingPage() {
             type="button"
             onClick={() => scrollCarousel(-1)}
             aria-label="Previous"
-            className="bg-black text-white p-3 rounded-full hover:bg-accent-hover transition-colors"
+            className="bg-black text-white p-3 rounded-full hover:bg-accent-hover transition-all duration-300 hover:scale-110 active:scale-95"
           >
             <span className="block rotate-180">
               <ArrowRight className="text-white" />
@@ -443,7 +509,7 @@ export default function LandingPage() {
             type="button"
             onClick={() => scrollCarousel(1)}
             aria-label="Next"
-            className="bg-black text-white p-3 rounded-full hover:bg-accent-hover transition-colors"
+            className="bg-black text-white p-3 rounded-full hover:bg-accent-hover transition-all duration-300 hover:scale-110 active:scale-95"
           >
             <ArrowRight className="text-white" />
           </button>
@@ -452,16 +518,22 @@ export default function LandingPage() {
 
       {/* Closing CTA */}
       <section className="flex flex-col items-center gap-10 px-6 md:px-28 py-20 w-full bg-gradient-to-b from-bg to-transparent">
-        <h2 className="text-[24px] md:text-[40px] font-semibold text-center text-fg">
-          Ready to dream up your new space?
-        </h2>
-        <Link
-          href="/signup"
-          className="bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-colors"
-        >
-          Try for free
-          <ArrowRight />
-        </Link>
+        <Reveal>
+          <h2 className="text-[24px] md:text-[40px] font-semibold text-center text-fg">
+            Ready to dream up your new space?
+          </h2>
+        </Reveal>
+        <Reveal delay={140}>
+          <Link
+            href="/signup"
+            className="group bg-fg text-bg text-[15px] font-medium inline-flex items-center gap-2 px-[26px] py-[14px] rounded-sm hover:bg-accent-hover transition-all duration-300 hover:shadow-md active:scale-[0.98]"
+          >
+            Try for free
+            <span className="inline-flex transition-transform duration-300 group-hover:translate-x-1">
+              <ArrowRight />
+            </span>
+          </Link>
+        </Reveal>
       </section>
 
       {/* Footer */}
@@ -480,16 +552,25 @@ export default function LandingPage() {
           <div className="flex gap-14">
             <div className="flex flex-col gap-3 whitespace-nowrap">
               <p className="text-[12px] font-medium tracking-[0.36px]">PRODUCT</p>
-              <a href="#how-it-works" className="text-[14px] hover:opacity-80">
+              <a
+                href="#how-it-works"
+                className="relative text-[14px] hover:opacity-80 after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
+              >
                 How it works
               </a>
-              <a href="#pricing" className="text-[14px] hover:opacity-80">
+              <a
+                href="#pricing"
+                className="relative text-[14px] hover:opacity-80 after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
+              >
                 Pricing
               </a>
             </div>
             <div className="flex flex-col gap-3 whitespace-nowrap">
               <p className="text-[12px] font-medium tracking-[0.36px]">COMPANY</p>
-              <a href="#" className="text-[14px] hover:opacity-80">
+              <a
+                href="#"
+                className="relative text-[14px] hover:opacity-80 after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
+              >
                 About
               </a>
             </div>
