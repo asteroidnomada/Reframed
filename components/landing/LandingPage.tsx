@@ -102,14 +102,14 @@ export default function LandingPage() {
   return (
     <div className="bg-bg text-fg font-sans flex flex-col items-stretch min-h-screen">
       {/* Nav */}
-      <nav className="h-16 flex items-center justify-between px-5 md:px-28 w-full">
+      <nav className="relative h-16 flex items-center justify-between px-5 md:px-28 w-full">
         <Link
           href="/"
           className="text-[18px] font-bold tracking-[-0.36px]"
         >
           Reframed
         </Link>
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+        <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex items-center gap-8 text-sm font-medium [&>a]:pointer-events-auto">
           <a href="#how-it-works" className="hover:text-fg-muted transition-colors">
             How it works
           </a>
