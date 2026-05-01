@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ACCESS_SLUG } from "@/lib/access";
 
 const PROTECTED = ["/gallery", "/upload", "/direction", "/account"];
-const AUTH_ROUTES = ["/login", "/signup"];
+const ACCESS_PREFIX = `/access/${ACCESS_SLUG}`;
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -34,11 +35,11 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isProtected = PROTECTED.includes(pathname) || pathname.startsWith("/project/");
-  const isAuthRoute = AUTH_ROUTES.includes(pathname);
+  const isAuthRoute = pathname === ACCESS_PREFIX || pathname === `${ACCESS_PREFIX}/signup`;
 
   if (!user && isProtected) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = ACCESS_PREFIX;
     return NextResponse.redirect(url);
   }
 

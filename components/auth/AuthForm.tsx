@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 
 type Mode = "sign-in" | "sign-up" | "reset";
 
-export function AuthForm({ initialMode }: { initialMode: Mode }) {
+export function AuthForm({ initialMode, slug }: { initialMode: Mode; slug: string }) {
   const router = useRouter();
   const supabase = createClient();
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -146,7 +146,7 @@ export function AuthForm({ initialMode }: { initialMode: Mode }) {
             <>
               <p>
                 No account?{" "}
-                <Link href="/signup" className="font-medium text-fg hover:underline">
+                <Link href={`/access/${slug}/signup`} className="font-medium text-fg hover:underline">
                   Create one
                 </Link>
               </p>
@@ -160,14 +160,14 @@ export function AuthForm({ initialMode }: { initialMode: Mode }) {
           {mode === "sign-up" && (
             <p>
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-fg hover:underline">
+              <Link href={`/access/${slug}`} className="font-medium text-fg hover:underline">
                 Sign in
               </Link>
             </p>
           )}
           {mode === "reset" && (
             <p>
-              <Link href="/login" className="font-medium text-fg hover:underline">
+              <Link href={`/access/${slug}`} className="font-medium text-fg hover:underline">
                 Back to sign in
               </Link>
             </p>
