@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav } from "@/components/Nav";
 import { Button } from "@/components/Button";
+import BetaBanner from "@/components/feedback/BetaBanner";
+import FeedbackModal from "@/components/feedback/FeedbackModal";
 import {
   deleteItem,
   getItems,
@@ -18,6 +20,7 @@ export default function GalleryHomePage() {
   const [hydrated, setHydrated] = useState(false);
   const [menuId, setMenuId] = useState<string | null>(null);
   const [confirmProjectDelete, setConfirmProjectDelete] = useState<string | null>(null);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   useEffect(() => {
     setItems(getItems());
@@ -137,6 +140,7 @@ export default function GalleryHomePage() {
 
   return (
     <div className="min-h-screen bg-bg-subtle">
+      <BetaBanner onOpenModal={() => setFeedbackOpen(true)} />
       <Nav />
       <main className="w-full px-6 pt-10 pb-24 lg:px-20">
         <div className="flex flex-col gap-6">
@@ -225,6 +229,8 @@ export default function GalleryHomePage() {
           )}
         </div>
       </main>
+
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       {confirmProjectDelete && (
         <div
