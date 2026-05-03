@@ -140,8 +140,8 @@ export default function GalleryHomePage() {
 
   return (
     <div className="min-h-screen bg-bg-subtle">
-      <BetaBanner onOpenModal={() => setFeedbackOpen(true)} />
       <Nav />
+      <BetaBanner onOpenModal={() => setFeedbackOpen(true)} />
       <main className="w-full px-6 pt-10 pb-24 lg:px-20">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
