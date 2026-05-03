@@ -139,12 +139,12 @@ export default function LandingPage() {
           >
             Pricing
           </a>
-          <a
-            href="#about"
+          <Link
+            href="/about"
             className="relative hover:text-fg-muted transition-colors after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
           >
             About
-          </a>
+          </Link>
         </div>
         <div className="flex items-center gap-4 md:gap-6">
           <Link
@@ -537,10 +537,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer
-        id="about"
-        className="bg-fg text-bg flex flex-col gap-6 px-6 md:px-24 py-12 w-full"
-      >
+      <footer className="bg-fg text-bg flex flex-col gap-6 px-6 md:px-24 py-12 w-full">
         <div className="flex flex-col md:flex-row gap-12 md:gap-[600px] md:justify-between items-start">
           <div className="flex flex-col gap-3 max-w-[442px]">
             <p className="text-[18px] font-bold tracking-[-0.36px]">Reframed</p>
@@ -567,12 +564,12 @@ export default function LandingPage() {
             </div>
             <div className="flex flex-col gap-3 whitespace-nowrap">
               <p className="text-[12px] font-medium tracking-[0.36px]">COMPANY</p>
-              <a
-                href="#"
+              <Link
+                href="/about"
                 className="relative text-[14px] hover:opacity-80 after:absolute after:left-0 after:-bottom-0.5 after:h-px after:w-0 after:bg-current after:transition-[width] after:duration-300 hover:after:w-full"
               >
                 About
-              </a>
+              </Link>
             </div>
           </div>
         </div>
