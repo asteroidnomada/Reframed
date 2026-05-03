@@ -5,8 +5,12 @@ export const runtime = "nodejs";
 
 const LINEAR_ENDPOINT = "https://api.linear.app/graphql";
 const TEAM_KEY = process.env.LINEAR_TEAM_KEY ?? "MDS";
+const PROJECT_NAME = "Reframed";
+const BUG_LABEL_NAME = "Bug";
 
 let cachedTeamId: string | null = null;
+let cachedProjectId: string | null | undefined; // undefined = not looked up; null = not found
+let cachedBugLabelId: string | null | undefined;
 
 async function linear<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const apiKey = process.env.LINEAR_API_KEY;
@@ -34,6 +38,30 @@ async function getTeamId(): Promise<string> {
   if (!team) throw new Error(`Linear team with key ${TEAM_KEY} not found`);
   cachedTeamId = team.id;
   return team.id;
+}
+
+async function getProjectId(): Promise<string | null> {
+  if (cachedProjectId !== undefined) return cachedProjectId;
+  const data = await linear<{ projects: { nodes: { id: string; name: string }[] } }>(
+    `query Projects($name: String!) {
+      projects(filter: { name: { eq: $name } }) { nodes { id name } }
+    }`,
+    { name: PROJECT_NAME }
+  );
+  cachedProjectId = data?.projects?.nodes?.[0]?.id ?? null;
+  return cachedProjectId;
+}
+
+async function getBugLabelId(): Promise<string | null> {
+  if (cachedBugLabelId !== undefined) return cachedBugLabelId;
+  const data = await linear<{ issueLabels: { nodes: { id: string; name: string }[] } }>(
+    `query Labels($name: String!) {
+      issueLabels(filter: { name: { eq: $name } }) { nodes { id name } }
+    }`,
+    { name: BUG_LABEL_NAME }
+  );
+  cachedBugLabelId = data?.issueLabels?.nodes?.[0]?.id ?? null;
+  return cachedBugLabelId;
 }
 
 const VALID_CATEGORIES = ["Bug", "Idea", "Praise", "Other"] as const;
@@ -74,9 +102,17 @@ export async function POST(req: Request) {
       // Anonymous submission — leave userEmail null.
     }
 
-    const teamId = await getTeamId();
+    const [teamId, projectId, bugLabelId] = await Promise.all([
+      getTeamId(),
+      getProjectId(),
+      getBugLabelId(),
+    ]);
+
     const ratingLabel = rating > 0 ? `${rating}/5 ★` : "—";
-    const title = `[Beta feedback] ${category}${rating > 0 ? ` · ${rating}/5` : ""}`;
+    const summary = message.split("\n")[0]?.slice(0, 80).trim();
+    const title = `Reframed · ${category}${rating > 0 ? ` (${rating}/5)` : ""}${
+      summary ? `: ${summary}` : ""
+    }`;
     const description = [
       `**Category:** ${category}`,
       `**Rating:** ${ratingLabel}`,
@@ -89,6 +125,10 @@ export async function POST(req: Request) {
       message,
     ].join("\n");
 
+    const input: Record<string, unknown> = { teamId, title, description };
+    if (projectId) input.projectId = projectId;
+    if (bugLabelId) input.labelIds = [bugLabelId];
+
     const data = await linear<{
       issueCreate: { success: boolean; issue: { id: string; identifier: string; url: string } };
     }>(
@@ -98,7 +138,7 @@ export async function POST(req: Request) {
           issue { id identifier url }
         }
       }`,
-      { input: { teamId, title, description } }
+      { input }
     );
 
     if (!data?.issueCreate?.success) {
