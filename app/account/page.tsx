@@ -107,33 +107,68 @@ export default function AccountPage() {
               <h2 className="text-xl leading-7 text-fg">Plan &amp; credits</h2>
               <p className="text-xs leading-4 text-fg-muted">Free Tier</p>
             </div>
-            <div className="flex flex-col gap-12 lg:w-[458px] lg:flex-shrink-0">
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs font-medium leading-4 text-fg">
-                    {used} of {FREE_MONTHLY_CREDITS} credits used
-                  </p>
-                  <p className="text-xs leading-4 text-fg-muted">
-                    Credits reset on the 1st of each month.
-                  </p>
-                </div>
-                <div className="flex items-center justify-between gap-6 border-t border-border pt-4">
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="text-sm leading-5 text-fg">Upgrade to Pro</p>
-                    <p className="text-xs leading-4 text-fg-muted">
-                      $29/month for unlimited generations.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    disabled
-                    className="inline-flex shrink-0 items-center justify-center rounded-md bg-accent px-3 py-1 text-sm leading-5 text-white disabled:cursor-not-allowed"
-                  >
-                    Coming soon
-                  </button>
-                </div>
+            <div className="flex flex-col gap-6 lg:w-[458px] lg:flex-shrink-0">
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-medium leading-4 text-fg">
+                  {used} of {FREE_MONTHLY_CREDITS} credits used
+                </p>
+                <p className="text-xs leading-4 text-fg-muted">
+                  Credits reset on the 1st of each month.
+                </p>
               </div>
+              <div className="flex items-center justify-between gap-6 border-t border-border pt-4">
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <p className="text-sm leading-5 text-fg">Upgrade to Pro</p>
+                  <p className="text-xs leading-4 text-fg-muted">
+                    $29/month for unlimited generations.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  disabled
+                  className="inline-flex shrink-0 items-center justify-center rounded-md bg-accent px-3 py-1 text-sm leading-5 text-white disabled:cursor-not-allowed"
+                >
+                  Coming soon
+                </button>
+              </div>
+            </div>
+          </section>
 
+          <section className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-28">
+            <div className="flex flex-col gap-2 lg:w-[173px]">
+              <h2 className="text-xl leading-7 text-fg">Billing</h2>
+              <p className="text-xs leading-4 text-fg-muted">Invoices &amp; payment</p>
+            </div>
+            <div className="flex flex-col gap-4 lg:w-[458px] lg:flex-shrink-0">
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border-strong px-6 py-10 text-center">
+                <span className="mb-1 text-fg-faint" aria-hidden>
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M5 3v18l2-1.4L9 21l2-1.4L13 21l2-1.4L17 21l2-1.4V3l-2 1.4L15 3l-2 1.4L11 3 9 4.4 7 3 5 4.4z" />
+                    <path d="M8.5 9h7M8.5 13h7" />
+                  </svg>
+                </span>
+                <p className="text-sm font-medium leading-5 text-fg">No invoices yet</p>
+                <p className="max-w-[320px] text-xs leading-[18px] text-fg-muted">
+                  You&rsquo;re on the Free plan. Upgrade to Pro and your monthly invoices will appear here, ready to download.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-28">
+            <div className="lg:w-[173px]">
+              <h2 className="text-xl leading-7 text-fg">Sign out</h2>
+            </div>
+            <div className="flex flex-col gap-6 lg:w-[458px] lg:flex-shrink-0">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-sm leading-5 text-fg">Sign out</p>
