@@ -56,13 +56,13 @@ export default function AboutPage() {
         </div>
         <div className="flex items-center gap-4 md:gap-6">
           <Link
-            href="/coming-soon"
+            href="/access/brew-r9k2"
             className="text-sm font-medium hover:text-fg-muted transition-colors"
           >
             Login
           </Link>
           <Link
-            href="/coming-soon"
+            href="/access/brew-r9k2/signup"
             className="group bg-fg text-bg text-sm font-medium px-5 py-[11px] rounded-sm hover:bg-accent-hover transition-all duration-300 active:scale-[0.98]"
           >
             Sign up
