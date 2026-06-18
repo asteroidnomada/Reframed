@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Reveal from "./Reveal";
 
 const PRESETS: Array<{ name: string; desc: string }> = [
@@ -14,36 +14,20 @@ const PRESETS: Array<{ name: string; desc: string }> = [
   { name: "Scandinavian", desc: "White oak · linen" },
 ];
 
-const FEATURE_CARDS: Array<{
-  before: string;
-  after: string;
-  alt: string;
-  tag: string;
-}> = [
-  {
-    before: "/landing/v2/feat-1-before.png",
-    after: "/landing/v2/feat-1-after.png",
-    alt: "Industrial co-working café reframe",
-    tag: "Industrial",
-  },
-  {
-    before: "/landing/v2/feat-2-before.png",
-    after: "/landing/v2/feat-2-after.png",
-    alt: "Industrial co-working café reframe",
-    tag: "Industrial",
-  },
-  {
-    before: "/landing/v2/feat-3-before.png",
-    after: "/landing/v2/feat-3-after.png",
-    alt: "Minimalist reframe",
-    tag: "Minimalist",
-  },
-  {
-    before: "/landing/v2/feat-4-before.png",
-    after: "/landing/v2/feat-4-after.png",
-    alt: "Scandinavian reframe",
-    tag: "Scandinavian",
-  },
+// One commercial space, shown in every preset. The "after" swaps when a preset
+// tab is selected (all preloaded for instant switching); the "before" stays
+// pinned as a reference.
+// TODO: replace with one real space rendered through each preset — these reuse
+// the existing feature shots as placeholders until that set is generated.
+const BEFORE_SRC = "/landing/v2/feat-1-before.png";
+
+const STYLE_VARIANTS: Array<{ name: string; after: string }> = [
+  { name: "Industrial", after: "/landing/v2/feat-1-after.png" },
+  { name: "Minimalist", after: "/landing/v2/feat-3-after.png" },
+  { name: "Scandinavian", after: "/landing/v2/feat-4-after.png" },
+  { name: "Warm café", after: "/landing/v2/feat-2-after.png" },
+  { name: "Mid-Century", after: "/landing/v2/feat-3-after.png" },
+  { name: "Japandi", after: "/landing/v2/feat-4-after.png" },
 ];
 
 const ArrowRight = ({ className = "" }: { className?: string }) => (
@@ -97,8 +81,9 @@ const ArrowUp = ({ className = "" }: { className?: string }) => (
 );
 
 export default function LandingPage() {
-  const carouselRef = useRef<HTMLDivElement | null>(null);
   const [activePreset, setActivePreset] = useState(1);
+  const [activeStyle, setActiveStyle] = useState(0);
+  const stageHoverRef = useRef(false);
 
   useEffect(() => {
     const reduced =
@@ -111,12 +96,18 @@ export default function LandingPage() {
     return () => window.clearInterval(id);
   }, []);
 
-  const scrollCarousel = useCallback((dir: 1 | -1) => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const card = el.querySelector<HTMLElement>("[data-card]");
-    const step = card ? card.offsetWidth + 16 : el.clientWidth;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
+  // Auto-rotate the style preview until the visitor hovers/interacts.
+  useEffect(() => {
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    const id = window.setInterval(() => {
+      if (!stageHoverRef.current) {
+        setActiveStyle((i) => (i + 1) % STYLE_VARIANTS.length);
+      }
+    }, 2800);
+    return () => window.clearInterval(id);
   }, []);
 
   return (
@@ -435,84 +426,86 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features carousel */}
-      <section className="flex flex-col gap-10 px-6 md:px-24 py-20 w-full overflow-hidden">
-        <Reveal className="flex flex-col gap-4">
+      {/* See your space in every style — interactive preset switcher */}
+      <section className="flex flex-col gap-8 md:gap-10 px-6 md:px-24 py-20 w-full">
+        <Reveal className="flex flex-col gap-3 md:gap-4">
           <h2 className="text-[24px] md:text-[40px] font-semibold leading-tight text-[#14110e]">
-            Check out these reimagined<br />co-working coffee shops
+            See your space in every style
           </h2>
           <p className="text-[18px] md:text-[24px] text-[rgba(20,17,14,0.5)]">
-            Generated using Nano Banana 3
+            Try out each preset for this commercial space.
           </p>
         </Reveal>
-        <div
-          ref={carouselRef}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mr-6 md:-mr-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {FEATURE_CARDS.map((card, i) => (
-            <Reveal
-              key={card.alt + i}
-              delay={i * 90}
-              className="snap-start flex-shrink-0"
-            >
-              <div
-                data-card
-                className="group flex gap-6 h-[342px] md:h-[500px] w-[624px] transition-transform duration-500 hover:-translate-y-1"
+
+        {/* Preset tabs — horizontal scroll on mobile, wrap on desktop */}
+        <div className="flex gap-2 md:gap-3 overflow-x-auto -mx-6 px-6 pb-1 md:mx-0 md:px-0 md:flex-wrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {STYLE_VARIANTS.map((s, i) => {
+            const active = i === activeStyle;
+            return (
+              <button
+                key={s.name}
+                type="button"
+                onClick={() => setActiveStyle(i)}
+                aria-pressed={active}
+                className={`shrink-0 rounded-md px-4 py-2 text-sm font-medium leading-5 transition-colors ${
+                  active
+                    ? "bg-accent text-white"
+                    : "border border-border bg-bg text-fg hover:border-border-strong"
+                }`}
               >
-                <div className="relative flex-1 overflow-hidden">
-                  <Image
-                    src={card.before}
-                    alt={`${card.alt} — before`}
-                    fill
-                    sizes="(max-width: 768px) 40vw, 300px"
-                    className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-                  />
-                  <div className="absolute left-4 bottom-5 flex gap-2 items-center">
-                    <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
-                      Before
-                    </span>
-                  </div>
-                </div>
-                <div className="relative flex-1 overflow-hidden">
-                  <Image
-                    src={card.after}
-                    alt={`${card.alt} — after`}
-                    fill
-                    sizes="(max-width: 768px) 40vw, 300px"
-                    className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
-                  />
-                  <div className="absolute left-4 bottom-5 flex gap-2 items-center">
-                    <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
-                      After
-                    </span>
-                    <span className="bg-bg border border-border text-fg text-[12px] font-medium px-2 py-1 rounded-md">
-                      {card.tag}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+                {s.name}
+              </button>
+            );
+          })}
         </div>
-        <div className="flex items-center justify-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => scrollCarousel(-1)}
-            aria-label="Previous"
-            className="bg-black text-white p-3 rounded-full hover:bg-accent-hover transition-all duration-300 hover:scale-110 active:scale-95"
-          >
-            <span className="block rotate-180">
-              <ArrowRight className="text-white" />
+
+        {/* Stage — after swaps with the selected preset; before pinned as inset */}
+        <div
+          className="relative w-full overflow-hidden rounded-xl aspect-[4/5] md:aspect-[1088/480]"
+          onMouseEnter={() => {
+            stageHoverRef.current = true;
+          }}
+          onMouseLeave={() => {
+            stageHoverRef.current = false;
+          }}
+        >
+          {STYLE_VARIANTS.map((s, i) => (
+            <Image
+              key={s.name}
+              src={s.after}
+              alt={`Your space in ${s.name} style`}
+              fill
+              sizes="(max-width: 768px) 100vw, 1088px"
+              priority={i === 0}
+              className={`object-cover transition-opacity duration-500 ${
+                i === activeStyle ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          ))}
+          {/* After + active style chips */}
+          <div className="absolute left-4 top-4 flex items-center gap-2">
+            <span className="bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
+              After
             </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollCarousel(1)}
-            aria-label="Next"
-            className="bg-black text-white p-3 rounded-full hover:bg-accent-hover transition-all duration-300 hover:scale-110 active:scale-95"
-          >
-            <ArrowRight className="text-white" />
-          </button>
+            <span className="bg-bg border border-border text-fg text-[12px] font-medium px-2 py-1 rounded-md">
+              {STYLE_VARIANTS[activeStyle].name}
+            </span>
+          </div>
+          {/* Before reference inset */}
+          <div className="absolute bottom-3 right-3 md:bottom-4 md:right-4 overflow-hidden rounded-lg border-2 border-white shadow-lg">
+            <div className="relative w-[126px] h-[95px] md:w-[220px] md:h-[165px]">
+              <Image
+                src={BEFORE_SRC}
+                alt="Before — your original space"
+                fill
+                sizes="220px"
+                className="object-cover"
+              />
+              <span className="absolute left-2 top-2 bg-fg text-bg text-[12px] font-medium px-2 py-1 rounded-md">
+                Before
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
