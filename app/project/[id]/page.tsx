@@ -9,6 +9,7 @@ import {
   updateTitle,
   type GalleryItem,
 } from "@/lib/gallery";
+import { downloadWatermarked } from "@/lib/watermark";
 
 type View = { kind: "before" } | { kind: "version"; index: number };
 
@@ -39,6 +40,7 @@ export default function ProjectDetailsPage() {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     const loaded = getItems();
@@ -110,15 +112,17 @@ export default function ProjectDetailsPage() {
     router.push("/direction");
   };
 
-  const onDownload = () => {
-    const a = document.createElement("a");
-    a.href = currentImageUrl;
-    a.download = `${item.title}-${versionLabel}.jpg`;
-    a.target = "_blank";
-    a.rel = "noreferrer";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  const onDownload = async () => {
+    if (downloading) return;
+    setDownloading(true);
+    try {
+      await downloadWatermarked(
+        currentImageUrl,
+        `${item.title}-${versionLabel}.jpg`
+      );
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const onConfirmDelete = () => {
@@ -253,9 +257,10 @@ export default function ProjectDetailsPage() {
     <button
       type="button"
       onClick={onDownload}
-      className="inline-flex w-full items-center justify-center rounded-md bg-accent px-5 py-2 text-sm leading-5 text-white transition-colors hover:bg-accent-hover lg:w-auto lg:self-start"
+      disabled={downloading}
+      className="inline-flex w-full items-center justify-center rounded-md bg-accent px-5 py-2 text-sm leading-5 text-white transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 lg:w-auto lg:self-start"
     >
-      Download image
+      {downloading ? "Preparing…" : "Download image"}
     </button>
   );
 
