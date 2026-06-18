@@ -150,7 +150,7 @@ export default function GalleryHomePage() {
       <BetaBanner onOpenModal={() => setFeedbackOpen(true)} />
       <main className="w-full px-6 pt-10 pb-24 lg:px-20">
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
             <div className="flex items-baseline gap-3 whitespace-nowrap">
               <h1 className="text-2xl font-medium leading-8 text-fg">Your gallery</h1>
               <p className="text-sm leading-5 text-fg-muted">
