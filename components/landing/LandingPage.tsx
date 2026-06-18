@@ -487,6 +487,15 @@ export default function LandingPage() {
       {/* Closing CTA */}
       <section className="flex flex-col items-center gap-10 px-6 md:px-28 py-20 w-full bg-gradient-to-b from-bg to-transparent">
         <Reveal>
+          <Image
+            src="/landing/v2/cta-coffee-room.png"
+            alt="Isometric illustration of a cozy coworking coffee shop"
+            width={1784}
+            height={2021}
+            className="h-auto w-[200px] md:w-[300px]"
+          />
+        </Reveal>
+        <Reveal>
           <h2 className="text-[24px] md:text-[40px] font-semibold text-center text-fg">
             Ready to dream up your new space?
           </h2>
