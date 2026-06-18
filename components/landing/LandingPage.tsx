@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Reveal from "./Reveal";
 
 const PRESETS: Array<{ name: string; desc: string }> = [
@@ -83,7 +83,6 @@ const ArrowUp = ({ className = "" }: { className?: string }) => (
 export default function LandingPage() {
   const [activePreset, setActivePreset] = useState(1);
   const [activeStyle, setActiveStyle] = useState(0);
-  const stageHoverRef = useRef(false);
 
   useEffect(() => {
     const reduced =
@@ -93,20 +92,6 @@ export default function LandingPage() {
     const id = window.setInterval(() => {
       setActivePreset((i) => (i + 1) % PRESETS.length);
     }, 2200);
-    return () => window.clearInterval(id);
-  }, []);
-
-  // Auto-rotate the style preview until the visitor hovers/interacts.
-  useEffect(() => {
-    const reduced =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) return;
-    const id = window.setInterval(() => {
-      if (!stageHoverRef.current) {
-        setActiveStyle((i) => (i + 1) % STYLE_VARIANTS.length);
-      }
-    }, 2800);
     return () => window.clearInterval(id);
   }, []);
 
@@ -460,15 +445,7 @@ export default function LandingPage() {
         </div>
 
         {/* Stage — after swaps with the selected preset; before pinned as inset */}
-        <div
-          className="relative w-full overflow-hidden rounded-xl aspect-[4/5] md:aspect-[1088/480]"
-          onMouseEnter={() => {
-            stageHoverRef.current = true;
-          }}
-          onMouseLeave={() => {
-            stageHoverRef.current = false;
-          }}
-        >
+        <div className="relative w-full overflow-hidden rounded-xl aspect-[4/5] md:aspect-[1088/480]">
           {STYLE_VARIANTS.map((s, i) => (
             <Image
               key={s.name}
