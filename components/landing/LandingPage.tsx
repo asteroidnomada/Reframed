@@ -17,17 +17,15 @@ const PRESETS: Array<{ name: string; desc: string }> = [
 // One commercial space, shown in every preset. The "after" swaps when a preset
 // tab is selected (all preloaded for instant switching); the "before" stays
 // pinned as a reference.
-// TODO: replace with one real space rendered through each preset — these reuse
-// the existing feature shots as placeholders until that set is generated.
-const BEFORE_SRC = "/landing/v2/feat-1-before.png";
+const BEFORE_SRC = "/landing/v2/space-before.jpeg";
 
 const STYLE_VARIANTS: Array<{ name: string; after: string }> = [
-  { name: "Industrial", after: "/landing/v2/feat-1-after.png" },
-  { name: "Minimalist", after: "/landing/v2/feat-3-after.png" },
-  { name: "Scandinavian", after: "/landing/v2/feat-4-after.png" },
-  { name: "Warm café", after: "/landing/v2/feat-2-after.png" },
-  { name: "Mid-Century", after: "/landing/v2/feat-3-after.png" },
-  { name: "Japandi", after: "/landing/v2/feat-4-after.png" },
+  { name: "Industrial", after: "/landing/v2/space-industrial.jpeg" },
+  { name: "Minimalist", after: "/landing/v2/space-minimalist.jpeg" },
+  { name: "Scandinavian", after: "/landing/v2/space-scandinavian.jpeg" },
+  { name: "Warm café", after: "/landing/v2/space-warmcafe.jpeg" },
+  { name: "Mid-Century", after: "/landing/v2/space-midcentury.jpeg" },
+  { name: "Japandi", after: "/landing/v2/space-japandi.jpeg" },
 ];
 
 const ArrowRight = ({ className = "" }: { className?: string }) => (
