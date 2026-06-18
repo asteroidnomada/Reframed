@@ -54,12 +54,18 @@ export default function GalleryHomePage() {
   const visibleItems = useMemo(() => {
     if (filter === "archived") return items.filter((i) => i.archived);
     if (filter === "recent") {
+      const active = items.filter((i) => !i.archived);
       const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
-      return items.filter((i) => {
-        if (i.archived) return false;
+      const withinWindow = active.filter((i) => {
         const t = new Date(i.date).getTime();
         return Number.isFinite(t) && t >= cutoff;
       });
+      // Never show an empty "Most Recent" view: fall back to the 3 newest
+      // uploads when nothing falls within the last 30 days.
+      if (withinWindow.length > 0) return withinWindow;
+      return [...active]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 3);
     }
     return items;
   }, [items, filter]);
@@ -156,7 +162,7 @@ export default function GalleryHomePage() {
             <div className="flex items-center gap-2">
               {hydrated && items.length === 0
                 ? (["recent", "archived", "all"] as const).map((key) => {
-                    const label = key === "all" ? "All" : key === "recent" ? "Recent" : "Archived";
+                    const label = key === "all" ? "All" : key === "recent" ? "Most Recent" : "Archived";
                     return (
                       <button
                         key={key}
@@ -171,7 +177,7 @@ export default function GalleryHomePage() {
                   })
                 : (["recent", "archived", "all"] as const).map((key) => {
                     const active = filter === key;
-                    const label = key === "all" ? "All" : key === "recent" ? "Recent" : "Archived";
+                    const label = key === "all" ? "All" : key === "recent" ? "Most Recent" : "Archived";
                     return (
                       <button
                         key={key}

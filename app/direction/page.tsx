@@ -18,6 +18,7 @@ export default function DirectionPage() {
   const [customPrompt, setCustomPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [quotaModal, setQuotaModal] = useState<{ reason: "free" | "credits" } | null>(null);
 
   useEffect(() => {
     const reframeRaw = sessionStorage.getItem("reframed:reframe");
@@ -54,6 +55,14 @@ export default function DirectionPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (res.status === 402) {
+        const data = await res.json().catch(() => ({}));
+        if (data.error === "out_of_quota") {
+          setQuotaModal({ reason: data.reason });
+          setLoading(false);
+          return;
+        }
+      }
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error ?? `Request failed (${res.status})`);
@@ -100,6 +109,7 @@ export default function DirectionPage() {
   const disabled = !selected || loading || !mode;
 
   return (
+    <>
     <div className="min-h-screen bg-bg-subtle">
       {loading && <GeneratingOverlay />}
       <Nav variant="secondary" backHref="/upload" onClose={() => router.push("/gallery")} />
@@ -203,5 +213,54 @@ export default function DirectionPage() {
         </div>
       </main>
     </div>
+
+      {quotaModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay px-6"
+          onClick={() => setQuotaModal(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-xl border border-border bg-bg p-8 text-center shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-6 flex flex-col gap-2">
+              <h2 className="text-[18px] font-semibold leading-6 text-fg">
+                {quotaModal.reason === "free"
+                  ? "You've used your free generations"
+                  : "No credits remaining"}
+              </h2>
+              <p className="text-sm leading-5 text-fg-muted">
+                {quotaModal.reason === "free"
+                  ? "You've used all 3 free generations this month. Upgrade to Pro for unlimited, or add credits to keep going."
+                  : "You've run out of render credits. Add more to continue, or upgrade to Pro for unlimited generations."}
+              </p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={() => router.push("/account")}
+                className="inline-flex w-full items-center justify-center rounded-md bg-accent px-5 py-2.5 text-sm font-medium leading-5 text-white transition-colors hover:bg-accent-hover"
+              >
+                Upgrade to Pro — $29/month
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/account/credits")}
+                className="inline-flex w-full items-center justify-center rounded-md border border-border bg-bg px-5 py-2.5 text-sm font-medium leading-5 text-fg transition-colors hover:border-border-strong"
+              >
+                Buy credits
+              </button>
+              <button
+                type="button"
+                onClick={() => setQuotaModal(null)}
+                className="text-sm leading-5 text-fg-muted transition-colors hover:text-fg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

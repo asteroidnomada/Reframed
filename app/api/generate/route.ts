@@ -4,6 +4,8 @@ import { generateText } from "ai";
 import { randomUUID } from "node:crypto";
 import { getPreset } from "@/lib/presets";
 import { REFRAMED_BUCKET, supabaseAdmin } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
+import { reserveCredit, commitCredit, releaseCredit, OutOfQuotaError } from "@/lib/billing";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -45,6 +47,13 @@ async function uploadToBucket(
 }
 
 export async function POST(req: Request) {
+  // Auth check
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   let body: Body;
   try {
     body = (await req.json()) as Body;
@@ -88,6 +97,25 @@ export async function POST(req: Request) {
     );
   }
 
+  // Reserve quota before generation
+  const generationId = randomUUID();
+  try {
+    await reserveCredit({ userId: user.id, generationId });
+  } catch (err) {
+    if (err instanceof OutOfQuotaError) {
+      return NextResponse.json(
+        {
+          error: "out_of_quota",
+          reason: err.reason,
+          upgradeUrl: "/account",
+          buyCreditsUrl: "/account/credits",
+        },
+        { status: 402 }
+      );
+    }
+    throw err;
+  }
+
   let generated: { mediaType: string; bytes: Uint8Array } | null = null;
   try {
     const result = await generateText({
@@ -108,37 +136,30 @@ export async function POST(req: Request) {
         break;
       }
     }
-  } catch (err) {
-    return NextResponse.json(
-      { error: `Generation failed: ${(err as Error).message}` },
-      { status: 500 }
-    );
-  }
 
-  if (!generated) {
-    return NextResponse.json(
-      { error: "Model returned no image" },
-      { status: 502 }
-    );
-  }
+    if (!generated) {
+      await releaseCredit({ userId: user.id, generationId });
+      return NextResponse.json({ error: "Model returned no image" }, { status: 502 });
+    }
 
-  const id = randomUUID();
-  const beforeExt = input.mediaType.split("/")[1] ?? "png";
-  const afterExt = generated.mediaType.split("/")[1] ?? "png";
+    const beforeExt = input.mediaType.split("/")[1] ?? "png";
+    const afterExt = generated.mediaType.split("/")[1] ?? "png";
 
-  try {
     const [beforeUrl, afterUrl] = await Promise.all([
-      uploadToBucket(`before/${id}.${beforeExt}`, input.bytes, input.mediaType),
-      uploadToBucket(`after/${id}.${afterExt}`, generated.bytes, generated.mediaType),
+      uploadToBucket(`before/${generationId}.${beforeExt}`, input.bytes, input.mediaType),
+      uploadToBucket(`after/${generationId}.${afterExt}`, generated.bytes, generated.mediaType),
     ]);
 
+    await commitCredit({ generationId });
+
     return NextResponse.json({
-      id,
+      id: generationId,
       title: preset.title,
       beforeUrl,
       afterUrl,
     });
   } catch (err) {
+    await releaseCredit({ userId: user.id, generationId });
     return NextResponse.json(
       { error: (err as Error).message },
       { status: 500 }
